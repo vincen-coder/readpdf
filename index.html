@@ -38,6 +38,17 @@
             transform: translateY(-5px);
         }
     </style>
+    <style>
+        /* Highlight for the currently spoken sentence */
+        .current-sentence {
+            background-color: rgba(134, 239, 172, 0.25);
+            border-left: 4px solid #86efac;
+            padding-left: 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .sentence { display: block; padding: 2px 0; }
+    </style>
 </head>
 
 <body class="bg-white text-gray-900 font-sans selection:bg-neuraGreen selection:text-black">
@@ -129,6 +140,8 @@
                             Select File
                         </button>
                         <input id="fileInput" type="file" accept="application/pdf" class="hidden">
+                        <!-- Message box for user-friendly feedback (errors, info, success) -->
+                        <div id="messageBox" role="status" aria-live="polite" class="mt-3"></div>
                     </div>
 
                     <div class="mt-8">
@@ -152,6 +165,9 @@
                                         <path d="M8 5v14l11-7z" />
                                     </svg>
                                 </button>
+                                <button id="stopBtn" title="Stop" class="w-10 h-10 flex items-center justify-center bg-gray-200 text-black rounded-full hover:scale-105 transition-transform ml-2">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>
+                                </button>
 
                                 <button id="forward" class="p-2 hover:bg-white rounded-full transition-colors"><svg
                                         class="w-6 h-6 transform rotate-180" viewBox="0 0 24 24" fill="currentColor">
@@ -170,6 +186,26 @@
                                 </select>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Progress bar: updates after each sentence -->
+                    <div class="mt-4 w-full max-w-2xl mx-auto">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="text-sm font-medium text-gray-700">Progress</div>
+                            <div id="etaText" class="text-xs text-gray-500">0:00 remaining</div>
+                        </div>
+                        <div id="progressContainer" class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                            <div id="progressBar" class="bg-neuraGreen h-full w-0 transition-all duration-500 ease-out"></div>
+                        </div>
+                        <div class="mt-2 text-right text-xs text-gray-600"><span id="progressText">0%</span></div>
+
+                        <!-- Seek slider: draggable range input to seek by sentence -->
+                        <div class="mt-3">
+                            <input id="seekSlider" type="range" min="0" max="100" step="0.1" value="0" class="w-full">
+                        </div>
+
+                        <!-- Rendered sentences: each sentence gets data-idx and will be highlighted while spoken -->
+                        <div id="sentencesContainer" class="mt-3 w-full max-h-40 overflow-auto text-left text-sm text-gray-700"></div>
                     </div>
 
                 </div>
@@ -243,7 +279,7 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc =
             "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     </script>
-    <script src="script.js"></script>
+    <script type="module" src="main.js"></script>
 </body>
 
 </html>
