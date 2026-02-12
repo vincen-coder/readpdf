@@ -11,7 +11,12 @@ export async function extractTextFromPDF(file) {
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const textContent = await page.getTextContent();
-    const text = textContent.items.map(item => item.str).join(' ');
+    // Join text items intelligently: PDFs store text in fragments with irregular spacing.
+    // Join without unconditional spaces, then collapse multiple spaces to single space.
+    let text = textContent.items
+      .map(item => item.str)
+      .join('')  // join without adding space; items may already have space
+      .replace(/\s+/g, ' ');  // collapse multiple whitespace to single space
     pages.push(text);
   }
 
