@@ -10,7 +10,7 @@ const { el } = ui;
 
 if (el.selectPdfBtn) el.selectPdfBtn.addEventListener('click', () => el.fileInput && el.fileInput.click());
 
-if (el.fileInput) el.fileInput.addEventListener('change', async (e) => {
+if (el.fileInput) el.fileInput.addEventListener('change', async (e) => {t
   const file = e.target.files && e.target.files[0];
   if (!file) { ui.showMessage('info', 'No file selected.'); return; }
   if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) { ui.showMessage('error', 'Please select a valid PDF file.'); return; }
