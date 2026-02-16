@@ -8,6 +8,12 @@ import * as player from './playerController.js';
 // Wire UI elements to actions
 const { el } = ui;
 
+// Check if window.speechSynthesis is available
+if (!window.speechSynthesis) {
+  console.warn('Speech synthesis not supported on this device');
+} else {
+  // Only attach event listeners if speechSynthesis is available
+
 if (el.selectPdfBtn) el.selectPdfBtn.addEventListener('click', () => el.fileInput && el.fileInput.click());
 
 if (el.fileInput) el.fileInput.addEventListener('change', async (e) => {t
@@ -34,7 +40,7 @@ if (el.fileInput) el.fileInput.addEventListener('change', async (e) => {t
   }
 });
 
-// Play / Pause
+// Play / Pause - button only clickable if speechSynthesis exists
 if (el.playPauseBtn) el.playPauseBtn.addEventListener('click', () => {
   if (!speechSynthesis.speaking || speechSynthesis.paused) {
     // resume or start
@@ -58,7 +64,7 @@ if (el.speedSelect) el.speedSelect.addEventListener('change', () => {
   }
 });
 
-// Seek slider handlers
+// Seek slider handlers - only draggable if speechSynthesis exists
 if (el.seekSlider) {
   let isSeeking = false;
   el.seekSlider.addEventListener('input', (e) => {
@@ -72,6 +78,15 @@ if (el.seekSlider) {
     const val = Number(e.target.value);
     player.seekToPercent(val);
   });
+}
+}
+
+// Expose a simple init for potential future hooks
+export function init() {
+  // nothing yet — module side-effects already wired handlers
+}
+
+init();
 }
 
 // Expose a simple init for potential future hooks
