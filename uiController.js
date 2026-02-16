@@ -15,7 +15,9 @@ const el = {
   etaText: document.getElementById('etaText'),
   seekSlider: document.getElementById('seekSlider'),
   sentencesContainer: document.getElementById('sentencesContainer'),
-  messageBox: document.getElementById('messageBox')
+  messageBox: document.getElementById('messageBox'),
+  menuBtn: document.getElementById('menuBtn'),
+  mobileMenu: document.getElementById('mobileMenu')
 };
 
 export { el };

@@ -8,11 +8,24 @@ import * as player from './playerController.js';
 // Wire UI elements to actions
 const { el } = ui;
 
-// Check if window.speechSynthesis is available
-if (!window.speechSynthesis) {
-  console.warn('Speech synthesis not supported on this device');
-} else {
-  // Only attach event listeners if speechSynthesis is available
+// Menu button toggle for mobile
+if (el.menuBtn && el.mobileMenu) {
+  el.menuBtn.addEventListener('click', () => {
+    el.mobileMenu.classList.toggle('-translate-y-full');
+  });
+}
+
+// Close menu when a mobile link is clicked
+const mobileLinks = document.querySelectorAll('.mobileLink');
+if (mobileLinks.length > 0) {
+  mobileLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (el.mobileMenu) {
+        el.mobileMenu.classList.add('-translate-y-full');
+      }
+    });
+  });
+}
 
 if (el.selectPdfBtn) el.selectPdfBtn.addEventListener('click', () => el.fileInput && el.fileInput.click());
 
@@ -40,53 +53,55 @@ if (el.fileInput) el.fileInput.addEventListener('change', async (e) => {t
   }
 });
 
-// Play / Pause - button only clickable if speechSynthesis exists
-if (el.playPauseBtn) el.playPauseBtn.addEventListener('click', () => {
-  if (!speechSynthesis.speaking || speechSynthesis.paused) {
-    // resume or start
-    if (speechSynthesis.paused) player.resume(); else player.speakCurrent(Number(el.speedSelect.value || 1));
-    el.playPauseBtn.textContent = 'Pause';
-  } else {
-    player.pause();
-    el.playPauseBtn.textContent = 'Play';
-  }
-});
+// Check if window.speechSynthesis is available
+if (!window.speechSynthesis) {
+  console.warn('Speech synthesis not supported on this device');
+} else {
+  // Only attach play button and progress bar listeners if speechSynthesis is available
 
-if (el.stopBtn) el.stopBtn.addEventListener('click', () => { player.stop(); el.playPauseBtn.textContent = 'Play'; ui.setSelectButtonState('default'); });
-if (el.forwardBtn) el.forwardBtn.addEventListener('click', () => player.next());
-if (el.backwardBtn) el.backwardBtn.addEventListener('click', () => player.prev());
-
-if (el.speedSelect) el.speedSelect.addEventListener('change', () => {
-  // if speaking, restart current sentence with new speed
-  if (speechSynthesis.speaking) {
-    speechSynthesis.cancel();
-    player.speakCurrent(Number(el.speedSelect.value || 1));
-  }
-});
-
-// Seek slider handlers - only draggable if speechSynthesis exists
-if (el.seekSlider) {
-  let isSeeking = false;
-  el.seekSlider.addEventListener('input', (e) => {
-    isSeeking = true;
-    const val = Number(e.target.value);
-    // preview percent
-    ui.updateProgressUI(val, ui.formatSeconds ? ui.formatSeconds(0) : '', Math.round(val) + '%');
+  // Play / Pause - button only clickable if speechSynthesis exists
+  if (el.playPauseBtn) el.playPauseBtn.addEventListener('click', () => {
+    if (!speechSynthesis.speaking || speechSynthesis.paused) {
+      // resume or start
+      if (speechSynthesis.paused) player.resume(); else player.speakCurrent(Number(el.speedSelect.value || 1));
+      el.playPauseBtn.textContent = 'Pause';
+    } else {
+      player.pause();
+      el.playPauseBtn.textContent = 'Play';
+    }
   });
-  el.seekSlider.addEventListener('change', (e) => {
-    isSeeking = false;
-    const val = Number(e.target.value);
-    player.seekToPercent(val);
+
+  if (el.stopBtn) el.stopBtn.addEventListener('click', () => { player.stop(); el.playPauseBtn.textContent = 'Play'; ui.setSelectButtonState('default'); });
+  if (el.forwardBtn) el.forwardBtn.addEventListener('click', () => player.next());
+  if (el.backwardBtn) el.backwardBtn.addEventListener('click', () => player.prev());
+
+  if (el.speedSelect) el.speedSelect.addEventListener('change', () => {
+    // if speaking, restart current sentence with new speed
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+      player.speakCurrent(Number(el.speedSelect.value || 1));
+    }
   });
-}
+
+  // Seek slider handlers - only draggable if speechSynthesis exists
+  if (el.seekSlider) {
+    let isSeeking = false;
+    el.seekSlider.addEventListener('input', (e) => {
+      isSeeking = true;
+      const val = Number(e.target.value);
+      // preview percent
+      ui.updateProgressUI(val, ui.formatSeconds ? ui.formatSeconds(0) : '', Math.round(val) + '%');
+    });
+    el.seekSlider.addEventListener('change', (e) => {
+      isSeeking = false;
+      const val = Number(e.target.value);
+      player.seekToPercent(val);
+    });
+  }
 }
 
-// Expose a simple init for potential future hooks
-export function init() {
-  // nothing yet — module side-effects already wired handlers
-}
+function menuBtnHandler() {
 
-init();
 }
 
 // Expose a simple init for potential future hooks
