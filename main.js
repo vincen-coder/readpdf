@@ -68,65 +68,50 @@ if (el.fileInput) {
   });
 }
 
-/* ===============================
-   SPEECH SYNTHESIS GUARD
-================================ */
-if (!window.speechSynthesis) {
-  console.warn('Speech synthesis not supported');
-  if (el.playPauseBtn) el.playPauseBtn.disabled = true;
-}
+// /* ===============================
+//    SPEECH SYNTHESIS GUARD
+// ================================ */
+// if (!window.speechSynthesis) {
+//   console.warn('Speech synthesis not supported');
+//   el.playPauseBtn.disabled = true;
+// }
 
 /* ===============================
    PLAYER CONTROLS
 ================================ */
 if (window.speechSynthesis) {
 
-  // PLAY / PAUSE
   if (el.playPauseBtn) {
-    el.playPauseBtn.addEventListener('click', () => {
-      if (!player.hasMarkers()) return;
+  el.playPauseBtn.addEventListener('click', () => {
+    // GUARD 1: SpeechSynthesis not supported
+    if (!window.speechSynthesis) return;
 
-      if (speechSynthesis.speaking && !speechSynthesis.paused) {
-        player.pause();
-        el.playPauseBtn.textContent = 'Play';
-      } else {
-        player.resumeOrSpeak(Number(el.speedSelect?.value || 1));
-        el.playPauseBtn.textContent = 'Pause';
-      }
-    });
-  }
+    // GUARD 2: Nothing loaded to speak
+    if (!player.hasContent()) return;
 
-  // STOP
-  if (el.stopBtn) {
-    el.stopBtn.addEventListener('click', () => {
-      player.stop();
-      el.playPauseBtn.textContent = 'Play';
-      ui.setSelectButtonState('default');
-    });
-  }
+    // CASE 1: Currently speaking → pause
+    if (speechSynthesis.speaking && !speechSynthesis.paused) {
+      player.pause();
+      ui.setPlayPauseIcon(false);
+      return;
+    }
+  
 
-  // NEXT / PREV
-  if (el.forwardBtn) el.forwardBtn.addEventListener('click', () => player.next());
-  if (el.backwardBtn) el.backwardBtn.addEventListener('click', () => player.prev());
+    // CASE 2: Paused → resume
+    if (speechSynthesis.paused) {
+      player.resume();
+      ui.setPlayPauseIcon(true);
+      return;
+    }
 
-  // SPEED CHANGE
-  if (el.speedSelect) {
-    el.speedSelect.addEventListener('change', () => {
-      if (speechSynthesis.speaking) {
-        speechSynthesis.cancel();
-        player.speakCurrent(Number(el.speedSelect.value || 1));
-      }
-    });
-  }
-
-  // SEEK SLIDER
-  if (el.seekSlider) {
-    el.seekSlider.addEventListener('change', (e) => {
-      const percent = Number(e.target.value);
-      player.seekToPercent(percent);
-    });
-  }
+    // CASE 3: Not started yet → start speaking
+    const speed = Number(el.speedSelect?.value || 1);
+    player.speakCurrent(speed);
+    ui.setPlayPauseIcon(true);
+  });
 }
+}
+
 
 /* ===============================
    INIT

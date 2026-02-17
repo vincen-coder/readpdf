@@ -50,16 +50,32 @@ export function setSelectButtonState(state) {
   if (!btn) return;
   if (state === 'loading') {
     btn.disabled = true;
-    btn.innerHTML = '<span><svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>Generating voice</span>';
+    btn.classList.add('inline-flex', 'items-center', 'justify-center', 'gap-2');
+    btn.innerHTML = '<svg class="spin -ml-1 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/></svg><span>Generating voice</span>';
     return;
   }
   if (state === 'success') {
     btn.disabled = true;
-    btn.innerHTML = '<span class="flex gap-2"><svg class="w-4 h-4 mr-2 " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414-1.414L8 11.172 4.707 7.879a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8z" clip-rule="evenodd"/></svg>Voice Genarated</span>';
+    btn.classList.add('inline-flex', 'items-center', 'justify-center', 'gap-2');
+    btn.innerHTML = '<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414-1.414L8 11.172 4.707 7.879a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8z" clip-rule="evenodd"/></svg><span>Voice Generated</span>';
     return;
   }
   btn.disabled = false;
+  btn.classList.remove('inline-flex', 'items-center', 'justify-center', 'gap-2');
   btn.innerHTML = 'Select File';
+}
+
+// Toggle the play/pause icon inside the play button
+export function setPlayPauseIcon(isPlaying) {
+  const btn = el.playPauseBtn;
+  if (!btn) return;
+  if (isPlaying) {
+    btn.innerHTML = '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+    btn.setAttribute('aria-label', 'Pause');
+  } else {
+    btn.innerHTML = '<svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"/></svg>';
+    btn.setAttribute('aria-label', 'Play');
+  }
 }
 
 export function updateProgressUI(percent, etaText, percentText) {

@@ -31,6 +31,9 @@ export function loadMarkersFromSentences(sentences) {
 export function getTotal() { return markers.length; }
 export function getCurrentIndex() { return currentIndex; }
 
+// Return whether we have any content loaded to speak
+export function hasContent() { return markers && markers.length > 0; }
+
 function updateProgress() {
   const total = markers.length;
   const completed = Math.min(currentIndex, total);
